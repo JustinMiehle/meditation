@@ -11,13 +11,14 @@ const MeditationApp: React.FC = () => {
 
 	useEffect(() => {
 		audioContext.current = new (
-			window.AudioContext || (window as any).webkitAudioContext
+			window.AudioContext ||
+			(window as unknown as { webkitAudioContext: typeof AudioContext })
+				.webkitAudioContext
 		)();
 		return () => {
 			audioContext.current?.close();
 		};
 	}, []);
-
 	const playSound = useCallback((frequency: number, duration: number) => {
 		if (!audioContext.current) return;
 
@@ -87,12 +88,12 @@ const MeditationApp: React.FC = () => {
 					let delay = 0;
 					const newTimeouts: NodeJS.Timeout[] = [];
 					for (const _ of Array(tenMinuteBellCount)) {
-						const timeout = setTimeout(() => playTenMinuteBell(), delay);
+						const timeout = setTimeout(() => playTenMinuteBell(), delay) as unknown as NodeJS.Timeout;
 						newTimeouts.push(timeout);
 						delay += 2000;
 					}
 					for (const _ of Array(fiveMinuteBellCount)) {
-						const timeout = setTimeout(() => playFiveMinuteBell(), delay);
+						const timeout = setTimeout(() => playFiveMinuteBell(), delay) as unknown as NodeJS.Timeout;
 						newTimeouts.push(timeout);
 						delay += 1500;
 					}
@@ -108,12 +109,12 @@ const MeditationApp: React.FC = () => {
 					let delay = 0;
 					const newTimeouts: NodeJS.Timeout[] = [];
 					for (const _ of Array(tenMinuteBellCount)) {
-						const timeout = setTimeout(() => playTenMinuteBell(), delay);
+						const timeout = setTimeout(() => playTenMinuteBell(), delay) as unknown as NodeJS.Timeout;
 						newTimeouts.push(timeout);
 						delay += 2000;
 					}
 					for (const _ of Array(fiveMinuteBellCount)) {
-						const timeout = setTimeout(() => playFiveMinuteBell(), delay);
+						const timeout = setTimeout(() => playFiveMinuteBell(), delay) as unknown as NodeJS.Timeout;
 						newTimeouts.push(timeout);
 						delay += 1500;
 					}
@@ -123,15 +124,13 @@ const MeditationApp: React.FC = () => {
 					playRegularBell();
 				}
 				return newTime;
-			});
-		}, 1000);
+			});		}, 1000) as unknown as NodeJS.Timeout;
 
 		return () => {
 			clearInterval(intervalRef.current as NodeJS.Timeout);
 			timeouts.forEach(clearTimeout);
 		};
-	}, [
-		isRunning,
+	}, [		isRunning,
 		time,
 		playRegularBell,
 		playFiveMinuteBell,
